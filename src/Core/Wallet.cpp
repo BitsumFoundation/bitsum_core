@@ -152,17 +152,30 @@ Wallet::Wallet(const std::string &path, const std::string &password, bool create
 			generate_new_address(SecretKey{}, m_oldest_timestamp);
 			first_record = m_wallet_records.begin()->second;
 		} else {
-			if (import_keys.size() != 128)
-				throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should be exactly 128 hex bytes");
-			WalletRecord record{};
-			if (//!common::pod_from_hex(import_keys.substr(0, 64), record.spend_public_key) ||
-			    //!common::pod_from_hex(import_keys.substr(64, 64), m_view_public_key) ||
-			    !common::pod_from_hex(import_keys.substr(0, 64), record.spend_secret_key) ||
-			    !common::pod_from_hex(import_keys.substr(64, 64), m_view_secret_key))
-				throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should contain only hex bytes");
+
+			if (import_keys.size() != 256 || import_keys.size() != 128)
+				throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should be exactly 128 or 256 hex bytes");
 			
-			crypto::secret_key_to_public_key(record.spend_secret_key, record.spend_public_key);
-			crypto::secret_key_to_public_key(m_view_secret_key, m_view_public_key);
+			WalletRecord record{};
+			
+			if (import_keys.size() == 128)
+			{
+				if (!common::pod_from_hex(import_keys.substr(0, 64), record.spend_secret_key) ||
+				    !common::pod_from_hex(import_keys.substr(64, 64), m_view_secret_key))
+					throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should contain only hex bytes");
+
+				crypto::secret_key_to_public_key(record.spend_secret_key, record.spend_public_key);
+				crypto::secret_key_to_public_key(m_view_secret_key, m_view_public_key);
+			}
+			else
+			{
+				if (!common::pod_from_hex(import_keys.substr(0, 64), record.spend_public_key) ||
+				    !common::pod_from_hex(import_keys.substr(64, 64), m_view_public_key) ||
+				    !common::pod_from_hex(import_keys.substr(128, 64), record.spend_secret_key) ||
+				    !common::pod_from_hex(import_keys.substr(192, 64), m_view_secret_key))
+					throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should contain only hex bytes");
+			}
+
 			if (!keys_match(m_view_secret_key, m_view_public_key))
 				throw Exception(
 				    api::WALLET_FILE_DECRYPT_ERROR, "Imported secret view key does not match corresponding public key");
@@ -419,8 +432,10 @@ bool Wallet::save_history(const Hash &bid, const History &used_addresses) const 
 	common::append(filename_data, std::begin(m_history_filename_seed.data), std::end(m_history_filename_seed.data));
 	Hash filename_hash = crypto::cn_fast_hash(filename_data.data(), filename_data.size());
 
-	return common::save_file(history_folder + "/" + common::pod_to_hex(filename_hash) + ".txh", encrypted_data.data(),
-	    encrypted_data.size());
+	const auto tmp_path = history_folder + "/_tmp.txh";
+	if( !common::save_file(tmp_path, encrypted_data.data(), encrypted_data.size()) )
+		return false;
+	return platform::atomic_replace_file(tmp_path, history_folder + "/" + common::pod_to_hex(filename_hash) + ".txh");
 }
 
 Wallet::History Wallet::load_history(const Hash &bid) const {

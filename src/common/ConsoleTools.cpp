@@ -72,7 +72,6 @@ void set_text_color(Color color) {
 UnicodeConsoleSetup::UnicodeConsoleSetup() {
 #ifdef _WIN32
 	SetConsoleOutputCP(CP_UTF8);
-	//std::cout.rdbuf(nullptr);
 	old_buf = std::cout.rdbuf(this);
 #else
 	boost::ignore_unused_variable_warning(old_buf);

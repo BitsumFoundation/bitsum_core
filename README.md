@@ -22,7 +22,7 @@ $> mkdir bitsum
 $> cd bitsum
 ```
 
-To go futher you have to have a number of packages and utilities.
+To go futher you have to have a number of packages and utilities. You need at least gcc 5.4.
 
 * `build-essential` package:
     ```
@@ -37,16 +37,15 @@ To go futher you have to have a number of packages and utilities.
     If version is too old, follow instructions on [the official site](https://cmake.org/download/).
 
 * Boost (1.62 or newer):
+    You need boost in `bcndev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
     ```
-    $> sudo apt-get install libboost-all-dev
-    $> cat /usr/include/boost/version.hpp | grep "BOOST_LIB_VERSION"
-    ```
-    If version is too old, download boost from [boost.org](https://boost.org), unpack it into a folder inside `bitsum` and rename it from `boost_1_66_0` or similar to just `boost`
-    Build boost
-    ```
-    $> cd boost
-    $bitsum/boost> ./bootstrap.sh
-    $bitsum/boost> ./b2 link=static -j 8 --build-dir=build64 --stagedir=stage
+    $bcndev> wget -c 'http://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.bz2/download'
+    $bcndev> tar xf download
+    $bcndev> rm download
+    $bcndev> mv boost_1_67_0 boost
+    $bcndev> cd boost
+    $bcndev/boost> ./bootstrap.sh
+    $bcndev/boost> ./b2 link=static cxxflags="-fPIC" linkflags="-pie" -j 8 --build-dir=build64 --stagedir=stage
     cd ..
     ```
 
@@ -64,14 +63,11 @@ Create build directory inside bytecoin, go there and run CMake and Make:
 ```
 $bitsum> mkdir bitsum_core/build
 $bitsum> cd bitsum_core/build
-$bitsum/bitsum_core/build> cmake -DUSE_SSL=0 ..
+$bitsum/bitsum_core/build> cmake ..
 $bitsum/bitsum_core/build> time make -j4
 ```
 
-Check built binaries by running them from `../bin` folder
-```
-$bitsum/bitsum_core/build> ../bin/bytecoind -v
-```
+
 
 ### Building with specific options
 
@@ -130,11 +126,6 @@ $bitsum/bitsum_core/build> cmake -DUSE_SSL=0 ..
 $bitsum/bitsum_core/build> time make -j4
 ```
 
-Check built binaries by running them from `../bin` folder:
-```
-$bitsum/bitsum_core/build> ../bin/bitsumd -v
-```
-
 ### Building with specific options
 
 Binaries linked with Boost installed by Homebrew will work only on your computer's OS X version or newer, but not on older versions like El Capitan.
@@ -147,9 +138,9 @@ Download and unpack [Boost](https://boost.org) to `Downloads` folder.
 
 Then build and install Boost:
 ```
-$~> cd ~/Downloads/boost_1_58_0/
-$~/Downloads/boost_1_58_0> ./bootstrap.sh
-$~/Downloads/boost_1_58_0> ./b2 -a -j 4 cxxflags="-stdlib=libc++ -std=c++14 -mmacosx-version-min=10.11 -isysroot/Users/user/Downloads/MacOSX10.11.sdk" install`
+$~> cd ~/Downloads/boost_1_67_0/
+$~/Downloads/boost_1_67_0> ./bootstrap.sh
+$~/Downloads/boost_1_67_0> ./b2 -a -j 4 cxxflags="-stdlib=libc++ -std=c++14 -mmacosx-version-min=10.11 -isysroot/Users/user/Downloads/MacOSX10.11.sdk" install`
 ```
 
 Install OpenSSL to `bitsum/openssl` folder:
@@ -185,7 +176,7 @@ $bitsum/bitsum_core/build> time make -j4
 
 ## Building on Windows
 
-You need Microsoft Visual Studio Community 2017. [Download](https://microsoft.com) and install it selecting `C++`, `git`, `cmake integration` packages.
+You need Microsoft Visual Studio Community 2017. [Download](https://www.visualstudio.com/vs/) and install it selecting `C++`, `git`, `cmake integration` packages.
 Run `Visual Studio x64 command prompt` from start menu.
 
 Create directory `bitsum` somewhere:
