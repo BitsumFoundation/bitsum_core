@@ -153,7 +153,7 @@ Wallet::Wallet(const std::string &path, const std::string &password, bool create
 			first_record = m_wallet_records.begin()->second;
 		} else {
 
-			if (import_keys.size() != 256 || import_keys.size() != 128)
+			if (import_keys.size() != 256 && import_keys.size() != 128)
 				throw Exception(api::WALLET_FILE_DECRYPT_ERROR, "Imported keys should be exactly 128 or 256 hex bytes");
 			
 			WalletRecord record{};
