@@ -46,7 +46,7 @@ namespace bitsum {
 
 			// BlockChainState block_chain(logManager, config, currency);
 			// std::unique_ptr<BlockChainState> block_chain;// (logManager, config, currency);
-			blockchain_state = std::make_unique<BlockChainState>(logManager, config, currency);
+			blockchain_state = std::make_unique<BlockChainState>(logManager, config, currency, false);
 
 			// boost::asio::io_service io;
 			platform::EventLoop run_loop(node_io);

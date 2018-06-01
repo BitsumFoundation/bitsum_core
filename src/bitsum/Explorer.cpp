@@ -12,7 +12,7 @@ namespace explorer {
 	crypto::Hash Explorer::GetBlockHash(uint32_t height)
 	{
 		crypto::Hash result;
-		_blockChain->read_chain(height, result);
+		_blockChain->read_chain(height, &result);
 
 		return result;
 	}
@@ -25,8 +25,8 @@ namespace explorer {
 		RawBlock rb;
 		api::BlockHeader bh;
 
-		_blockChain->read_block(bid, rb);
-		_blockChain->read_header(bid, bh);
+		_blockChain->read_block(bid, &rb);
+		_blockChain->read_header(bid, &bh);
 
 		result.height = height;
 		std::copy(std::begin(bid.data), std::end(bid.data), std::begin(result.hash));

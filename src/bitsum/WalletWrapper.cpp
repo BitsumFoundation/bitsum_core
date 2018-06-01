@@ -295,7 +295,7 @@ namespace bitsum {
 			AccountPublicAddress adr;
 			AccountKeys ak;
 
-			if (!common::base58::decode_addr(address, prefix, data)) return false; // parsing error
+			if (!common::base58::decode_addr(address, &prefix, &data)) return false; // parsing error
 			seria::from_binary(adr, data);
 			wallet->spend_keys_for_address(adr, ak);
 			SecretKey sk = ak.spend_secret_key;

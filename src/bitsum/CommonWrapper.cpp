@@ -21,7 +21,7 @@ namespace bitsum {
 
 		try
 		{
-			if (!common::base58::decode_addr(address, prefix, data))
+			if (!common::base58::decode_addr(address, &prefix, &data))
 				return false;
 			seria::from_binary(adr, data);
 			return key_isvalid(adr.spend_public_key) && key_isvalid(adr.view_public_key);

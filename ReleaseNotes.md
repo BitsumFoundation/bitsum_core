@@ -1,5 +1,9 @@
 ## Release Notes
 
+### v1.18.6.1
+- Merge code with bytecoin v3.1.1
+- Fix importing keys
+
 ### v1.18.5.25
 - Merge code with bytecoin v3.1.0
 
