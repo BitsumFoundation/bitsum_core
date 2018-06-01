@@ -39,13 +39,12 @@ To go futher you have to have a number of packages and utilities. You need at le
 * Boost (1.62 or newer):
     You need boost in `bcndev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
     ```
-    $bcndev> wget -c 'http://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.bz2/download'
-    $bcndev> tar xf download
-    $bcndev> rm download
-    $bcndev> mv boost_1_67_0 boost
-    $bcndev> cd boost
-    $bcndev/boost> ./bootstrap.sh
-    $bcndev/boost> ./b2 link=static cxxflags="-fPIC" linkflags="-pie" -j 8 --build-dir=build64 --stagedir=stage
+    $bitsum> wget -c 'https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz'
+    $bitsum> tar xf boost_1_67_0.tar.gz
+    $bitsum> mv boost_1_67_0 boost
+    $bitsum> cd boost
+    $bitsum/boost> ./bootstrap.sh
+    $bitsum/boost> ./b2 link=static cxxflags="-fPIC" linkflags="-pie" -j 8 --build-dir=build64 --stagedir=stage
     cd ..
     ```
 
