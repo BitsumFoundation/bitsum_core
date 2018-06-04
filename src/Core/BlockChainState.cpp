@@ -748,12 +748,12 @@ AddTransactionResult BlockChainState::add_transaction(const Hash &tid, const Tra
 			break;  // Removing would diminish pool below max size
 		remove_from_pool(rhash);
 	}
-	auto min_size = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
-	                    ? 0
-	                    : m_memory_state_tx.at(*(m_memory_state_fee_tx.begin()->second.begin())).binary_tx.size();
-	auto min_fee_per_byte = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
-	                            ? 0
-	                            : m_memory_state_fee_tx.begin()->first;
+	//auto min_size = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
+	//                    ? 0
+	//                    : m_memory_state_tx.at(*(m_memory_state_fee_tx.begin()->second.begin())).binary_tx.size();
+	//auto min_fee_per_byte = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
+	                            //? 0
+	                            //: m_memory_state_fee_tx.begin()->first;
 	//	if( m_memory_state_total_size-min_size >= MAX_POOL_SIZE)
 	//		std::cout << "Aha" << std::endl;
 	m_log(logging::INFO) << "TX+ hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size();
@@ -795,12 +795,12 @@ void BlockChainState::remove_from_pool(Hash tid) {
 		throw std::logic_error("Invariant dead, remove_memory_pool failed to erase everything");
 	// We do not increment m_tx_pool_version, because removing tx from pool is
 	// always followed by reset or increment
-	auto min_size = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
-	                    ? 0
-	                    : m_memory_state_tx.at(*(m_memory_state_fee_tx.begin()->second.begin())).binary_tx.size();
-	auto min_fee_per_byte = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
-	                            ? 0
-	                            : m_memory_state_fee_tx.begin()->first;
+	//auto min_size = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
+	//                    ? 0
+	//                    : m_memory_state_tx.at(*(m_memory_state_fee_tx.begin()->second.begin())).binary_tx.size();
+	//auto min_fee_per_byte = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
+	                            //? 0
+	                            //: m_memory_state_fee_tx.begin()->first;
 	m_log(logging::INFO) << "TX- hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size();
 	                     //<< " current_pool_size=(" << m_memory_state_total_size - min_size << "+" << min_size << ")="
 	                     //<< m_memory_state_total_size << " count=" << m_memory_state_tx.size()
