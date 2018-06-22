@@ -25,7 +25,6 @@ Usage:
 
 Options:
   --allow-local-ip                     Allow local ip add to peer list, mostly in debug purposes.
-
   --p2p-bind-address=<ip:port>         Interface and port for P2P network protocol [default: 0.0.0.0:28080].
   --p2p-external-port=<port>           External port for P2P network protocol, if port forwarding used with NAT [default: 28080].
   --daemon-rpc-bind-address=<ip:port>  Interface and port for bitsumd RPC [default: 127.0.0.1:28081].
@@ -36,7 +35,7 @@ Options:
   --backup-blockchain=<folder>         Perform hot backup of blockchain into specified backup data folder, then exit.
   --data-folder=<full-path>            Folder for blockchain, logs and peer DB [default: )" platform_DEFAULT_DATA_FOLDER_PATH_PREFIX
     R"(bitsum].
-  --bytecoind-authorization=<usr:pass> HTTP authorization for RPC.
+  --rpc-authorization=<usr:pass> HTTP authorization for RPC.
 )"
 #if platform_USE_SSL
     R"(  --ssl-certificate-pem-file=<file>    Full path to file containing both server SSL certificate and private key in PEM format.

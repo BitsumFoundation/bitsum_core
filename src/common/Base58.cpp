@@ -69,33 +69,17 @@ uint64_t uint_8be_to_64(const uint8_t *data, size_t size) {
 	assert(1 <= size && size <= sizeof(uint64_t));
 
 	uint64_t res = 0;
-	switch (9 - size) {
-	case 1:
-		res |= *data++;
-	case 2:
-		res <<= 8;
-		res |= *data++;
-	case 3:
-		res <<= 8;
-		res |= *data++;
-	case 4:
-		res <<= 8;
-		res |= *data++;
-	case 5:
-		res <<= 8;
-		res |= *data++;
-	case 6:
-		res <<= 8;
-		res |= *data++;
-	case 7:
-		res <<= 8;
-		res |= *data++;
-	case 8:
-		res <<= 8;
-		res |= *data;
-		break;
-	default:
-		assert(false);
+	switch (9 - size)
+	{
+		case 1:            res |= *data++; /* fallthrough */
+		case 2: res <<= 8; res |= *data++; /* fallthrough */
+		case 3: res <<= 8; res |= *data++; /* fallthrough */
+		case 4: res <<= 8; res |= *data++; /* fallthrough */
+		case 5: res <<= 8; res |= *data++; /* fallthrough */
+		case 6: res <<= 8; res |= *data++; /* fallthrough */
+		case 7: res <<= 8; res |= *data++; /* fallthrough */
+		case 8: res <<= 8; res |= *data; break;
+		default: assert(false);
 	}
 
 	return res;

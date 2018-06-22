@@ -11,6 +11,7 @@
 #include "common/Base58.hpp"
 #include "seria/BinaryInputStream.hpp"
 #include "seria/BinaryOutputStream.hpp"
+#include "Explorer.hpp"
 
 using namespace bytecoin;
 using namespace common;
@@ -20,16 +21,17 @@ namespace bitsum {
 	boost::asio::io_service node_io;
 	std::unique_ptr<platform::ExclusiveLock> node_lock;
 	std::unique_ptr<BlockChainState> blockchain_state;
+	std::unique_ptr<explorer::Explorer> explorer;
 
-	EXPORT int StartNode(bool coutRedirect = true)
+	EXPORT int StartNode(bool coutRedirect = false)
 	{
 		try {
-			if (coutRedirect) {
-				std::cout.rdbuf(nullptr);
-			}
-			else {
+			//if (coutRedirect) {
+			//	std::cout.rdbuf(nullptr);
+			//}
+			//else {
 				common::console::UnicodeConsoleSetup console_setup;
-			}
+			//}
 
 			auto idea_start = std::chrono::high_resolution_clock::now();
 
@@ -56,6 +58,8 @@ namespace bitsum {
 			auto idea_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
 				std::chrono::high_resolution_clock::now() - idea_start);
 			std::cout << "bitsumd started seconds=" << double(idea_ms.count()) / 1000 << std::endl;
+		    explorer = std::make_unique<explorer::Explorer>(blockchain_state.get());
+
 			while (!node_io.stopped()) {
 				if (node.on_idle())  // Using it to load blockchain
 					node_io.poll();
@@ -80,5 +84,33 @@ namespace bitsum {
 		catch (const std::exception) {
 			return -1;
 		}
+	}
+
+	EXPORT void GetBlockPreview(uint32_t height, explorer::BlockPreview &blockPreview)
+	{	
+		blockPreview = explorer::BlockPreview();
+		blockPreview = explorer->GetBlockPreview(height);
+	}
+
+	EXPORT void GetBlockPreview2(uint32_t height, explorer::BlockPreview2 &blockPreview)
+	{
+		blockPreview = explorer::BlockPreview2();
+		blockPreview = explorer->GetBlockPreview2(height);
+	}
+
+	EXPORT crypto::Hash GetBlockPreview3(uint32_t height)
+	{
+		return explorer->GetBlockPreview3(height);
+	}
+
+	EXPORT explorer::BlockPreview2 GetBlockPreview4()
+	{
+		//uint8_t data[32];
+		auto d = explorer->GetBlockPreview4(15000);
+		explorer::BlockPreview2 result = explorer::BlockPreview2();
+		result.length = d.capacity();
+		result.hash = d;
+		 
+		return result;
 	}
 }

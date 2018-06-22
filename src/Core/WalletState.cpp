@@ -306,7 +306,7 @@ void WalletState::wallet_addresses_updated() {
 		         // case of ctrl-c
 	}
 	while (m_tip_height + 1 > m_tail_height &&
-	       get_tip().timestamp + m_currency.block_future_time_limit >=
+	       get_tip().timestamp + m_currency.get_block_future_time_limit(get_tip_height() + 1) >=
 	           undo_timestamp) {  // Undo excess blocks in case timestamps are out of
 		                          // order
 		undo_block(m_tip_height);
@@ -335,7 +335,7 @@ std::vector<WalletRecord> WalletState::generate_new_addresses(const std::vector<
 		return result;
 	}
 	while (m_tip_height + 1 > m_tail_height &&
-	       get_tip().timestamp + m_currency.block_future_time_limit >=
+	       get_tip().timestamp + m_currency.get_block_future_time_limit(get_tip_height() + 1) >=
 	           undo_timestamp) {  // Undo excess blocks in case timestamps are out of
 		                          // order
 		undo_block(m_tip_height);
@@ -383,7 +383,7 @@ bool WalletState::sync_with_blockchain(api::bytecoind::SyncBlocks::Response &res
 		const api::BlockHeader &header = resp.blocks.at(bin).header;
 		if (m_tip_height + 1 != m_tail_height && header.previous_block_hash != m_tip.hash)
 			return false;
-		if (header.timestamp + m_currency.block_future_time_limit >= m_wallet.get_oldest_timestamp()) {
+		if (header.timestamp + m_currency.get_block_future_time_limit(get_tip_height() + 1) >= m_wallet.get_oldest_timestamp()) {
 			const auto &block_gi   = resp.blocks.at(bin).global_indices;
 			PreparedWalletBlock pb = preparator.get_ready_work(m_tip_height + 1);
 			// PreparedWalletBlock pb(std::move(resp.blocks.at(bin).block), m_wallet.get_view_secret_key());

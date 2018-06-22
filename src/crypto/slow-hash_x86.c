@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include "crypto/cryptonight-variants.h"
 
 #ifdef __APPLE__
 #include "TargetConditionals.h"
@@ -40,7 +41,14 @@
 #endif
 
 #define MEMORY         (1 << 21) /* 2 MiB */
-#define ITER           (1 << 20)
+#define ITER           (1 << 19)
+#define MASK           0x1FFFF0
+
+// Cryptonight Lite
+#define LITE_MEMORY    (1 << 20) /* 1 MiB */
+#define LITE_ITER      (1 << 18)
+#define LITE_MASK      0xFFFF0
+
 #define AES_BLOCK_SIZE  16
 #define AES_KEY_SIZE    32 /*16*/
 #define INIT_SIZE_BLK   8
@@ -178,17 +186,17 @@ static int cpu_has_aesni(void){
   return (ecx & (1 << 25)) ? 1 : 0;
 }
 
-static void cn_slow_hash_runtime_aes_check(void * a, const void * b, size_t c, void * d){
+static void cn_slow_hash_runtime_aes_check(void * a, const void * b, size_t c, void * d, int lite, int variant){
   if( cpu_has_aesni() )
-    cn_slow_hash_aesni(a, b, c, d);
+    cn_slow_hash_aesni(a, b, c, d, lite, variant);
   else
-    cn_slow_hash_noaesni(a, b, c, d);
+    cn_slow_hash_noaesni(a, b, c, d, lite, variant);
 }
 
-static void (*cn_slow_hash_fp)(void *, const void *, size_t, void *) = cn_slow_hash_runtime_aes_check;
+static void (*cn_slow_hash_fp)(void *, const void *, size_t, void *, int lite, int variant) = cn_slow_hash_runtime_aes_check;
 
-void cn_slow_hash(void * a, const void * b, size_t c, void * d){
-  (*cn_slow_hash_fp)(a, b, c, d);
+void cn_slow_hash(void * a, const void * b, size_t c, void * d, int lite, int variant){
+  (*cn_slow_hash_fp)(a, b, c, d, lite, variant);
 }
 
 // If INITIALIZER fails to compile on your platform, just comment out 3 lines below

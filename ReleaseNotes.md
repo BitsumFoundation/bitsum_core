@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v1.18.6.22
+- Change POW algo (CryptoNight Lite, Variation 1)
+- Change Difficulty algo (LWMA-2)
+- Improvements for CXX 7
+
 ### v1.18.6.1
 - Merge code with bytecoin v3.1.1
 - Fix importing keys

@@ -39,9 +39,9 @@ To go futher you have to have a number of packages and utilities. You need at le
 * Boost (1.62 or newer):
     You need boost in `bcndev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
     ```
-    $bitsum> wget -c 'https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz'
-    $bitsum> tar xf boost_1_67_0.tar.gz
-    $bitsum> mv boost_1_67_0 boost
+    $bitsum> wget -c 'https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz'
+    $bitsum> tar xf boost_1_65_1.tar.gz
+    $bitsum> mv boost_1_65_1 boost
     $bitsum> cd boost
     $bitsum/boost> ./bootstrap.sh
     $bitsum/boost> ./b2 link=static cxxflags="-fPIC" linkflags="-pie" -j 8 --build-dir=build64 --stagedir=stage
@@ -139,7 +139,7 @@ Then build and install Boost:
 ```
 $~> cd ~/Downloads/boost_1_67_0/
 $~/Downloads/boost_1_67_0> ./bootstrap.sh
-$~/Downloads/boost_1_67_0> ./b2 -a -j 4 cxxflags="-stdlib=libc++ -std=c++14 -mmacosx-version-min=10.11 -isysroot/Users/user/Downloads/MacOSX10.11.sdk" install`
+$~/Downloads/boost_1_67_0> ./b2 -a -j 4 cxxflags="-stdlib=libc++ -std=c++14 -mmacosx-version-min=10.11 -isysroot/Users/user/Downloads/MacOSX10.11.sdk -fPIC" linkflags="-pie" install`
 ```
 
 Install OpenSSL to `bitsum/openssl` folder:

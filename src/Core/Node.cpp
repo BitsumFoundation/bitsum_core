@@ -321,7 +321,7 @@ void Node::advance_long_poll() {
 	if (!prevent_sleep && m_block_chain.get_tip().timestamp < now - 86400)
 		prevent_sleep = std::make_unique<platform::PreventSleep>("Downloading blockchain");
 	if (prevent_sleep &&
-	    m_block_chain.get_tip().timestamp > now - m_block_chain.get_currency().block_future_time_limit * 2)
+	    m_block_chain.get_tip().timestamp > now - m_block_chain.get_currency().get_block_future_time_limit(m_block_chain.get_tip_height() + 1) * 2)
 		prevent_sleep = nullptr;
 	if (m_long_poll_http_clients.empty())
 		return;
@@ -537,9 +537,9 @@ bool Node::on_wallet_sync3(http::Client *, http::RequestData &&, json_rpc::Reque
 	if (req.max_count > api::bytecoind::SyncBlocks::Request::MAX_COUNT)
 		throw std::runtime_error(
 		    "Too big max_count - must be < " + std::to_string(api::bytecoind::SyncBlocks::Request::MAX_COUNT));
-	auto first_block_timestamp = req.first_block_timestamp < m_block_chain.get_currency().block_future_time_limit
+	auto first_block_timestamp = req.first_block_timestamp < m_block_chain.get_currency().get_block_future_time_limit(m_block_chain.get_tip_height() + 1)
 	                                 ? 0
-	                                 : req.first_block_timestamp - m_block_chain.get_currency().block_future_time_limit;
+	                                 : req.first_block_timestamp - m_block_chain.get_currency().get_block_future_time_limit(m_block_chain.get_tip_height() + 1);
 	Height full_offset = m_block_chain.get_timestamp_lower_bound_block_index(first_block_timestamp);
 	Height start_block_index;
 	std::vector<crypto::Hash> supplement =

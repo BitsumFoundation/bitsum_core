@@ -78,7 +78,7 @@ void WalletSync::advance_sync() {
 	if (!prevent_sleep && m_wallet_state.get_tip().timestamp < now - 86400)
 		prevent_sleep = std::make_unique<platform::PreventSleep>("Synchronizing wallet");
 	if (prevent_sleep &&
-	    m_wallet_state.get_tip().timestamp > now - m_wallet_state.get_currency().block_future_time_limit * 2)
+	    m_wallet_state.get_tip().timestamp > now - m_wallet_state.get_currency().get_block_future_time_limit(m_wallet_state.get_tip_height() + 1) * 2)
 		prevent_sleep = nullptr;
 	if (m_sync_request)
 		return;

@@ -5,8 +5,8 @@
 //
 
 1 VERSIONINFO
- FILEVERSION 1,18,6,1
- PRODUCTVERSION 1,18,6,1
+ FILEVERSION 1,18,6,22
+ PRODUCTVERSION 1,18,6,22
  FILEFLAGSMASK 0x3fL
  FILEFLAGS 0x0L
  FILEOS 0x40004L
@@ -19,12 +19,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Bitsum Foundation"
             VALUE "FileDescription", "Bitsum"
-            VALUE "FileVersion", "1.18.4.5"
+            VALUE "FileVersion", "1.18.6.22"
             VALUE "InternalName", "bitsum.rc"
             VALUE "LegalCopyright", "Copyright (C) Bitsum Foundation, 2018"
             VALUE "OriginalFilename", "bitsum.rc"
             VALUE "ProductName", "Bitsum"
-            VALUE "ProductVersion", "1.18.6.1"
+            VALUE "ProductVersion", "1.18.6.22"
         END
     END
     BLOCK "VarFileInfo"

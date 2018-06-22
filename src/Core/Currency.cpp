@@ -75,7 +75,15 @@ Currency::Currency(bool is_testnet)
     , locked_tx_allowed_delta_blocks(parameters::CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS)
     , upgrade_height_v2(parameters::UPGRADE_HEIGHT_V2)
     , upgrade_height_v3(parameters::UPGRADE_HEIGHT_V3)
-    , current_transaction_version(CURRENT_TRANSACTION_VERSION) {
+	, upgrade_height_v4(parameters::UPGRADE_HEIGHT_V4)
+    , current_transaction_version(CURRENT_TRANSACTION_VERSION)
+	, hardfork_v1_height(parameters::HARDFORK_V1_HEIGHT)
+	, hardfork_v2_height(parameters::HARDFORK_V2_HEIGHT)
+	, hardfork_v3_height(parameters::HARDFORK_V3_HEIGHT)
+	, timestamp_check_window_v2(parameters::BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V2)
+	, block_future_time_limit_v2(parameters::CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V2)
+	, difficulty_window_v2(parameters::DIFFICULTY_WINDOW_V2)
+	, difficulty_blocks_count_v2(parameters::DIFFICULTY_BLOCKS_COUNT_V2) {
 	if (is_testnet) {
 		upgrade_height_v2 = 0;
 		upgrade_height_v3 = static_cast<Height>(-1);
@@ -142,7 +150,9 @@ uint8_t Currency::get_block_major_version_for_height(Height height) const {
 		return 1;
 	if (height > upgrade_height_v2 && height <= upgrade_height_v3)
 		return 2;
-	return 3;  // info.height > currency.upgrade_height_v3
+	if (height > upgrade_height_v3 && height <= upgrade_height_v4)
+		return 3;
+	return 4;  
 }
 
 uint32_t Currency::block_granted_full_reward_zone_by_block_version(uint8_t block_major_version) const {
@@ -386,6 +396,16 @@ bool Currency::parse_amount(size_t number_of_decimal_places, const std::string &
 
 Difficulty Currency::next_difficulty(Height block_index,
 	std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const {
+	if (block_index <= hardfork_v2_height)
+	{
+		return next_difficulty_v1(block_index, timestamps, cumulative_difficulties);
+	}
+
+	return next_difficulty_v2(timestamps, cumulative_difficulties);
+}
+
+Difficulty Currency::next_difficulty_v1(Height block_index, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const
+{
 	std::vector<Timestamp> timestamps_o(timestamps);
 	std::vector<Difficulty> cumulativeDifficulties_o(cumulative_difficulties);
 	size_t c_difficultyWindow = difficulty_window;
@@ -431,8 +451,7 @@ Difficulty Currency::next_difficulty(Height block_index,
 		return 0;
 	}
 
-	//auto c = (low + timeSpan - 1) / timeSpan;
-	if (block_index >= 106195) {
+	if (block_index >= hardfork_v1_height) {
 		if (high != 0) {
 			return 0;
 		}
@@ -490,6 +509,44 @@ Difficulty Currency::next_difficulty(Height block_index,
 	return (low + timeSpan - 1) / timeSpan;
 }
 
+// LWMA-2 difficulty algorithm 
+// Copyright (c) 2017-2018 Zawy, MIT License
+// https://github.com/zawy12/difficulty-algorithms/issues/3
+Difficulty Currency::next_difficulty_v2(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const
+{
+	int64_t T = difficulty_target;
+	int64_t N = difficulty_window_v2;
+	int64_t FTL = block_future_time_limit_v2;
+	int64_t L(0), ST, sum_3_ST(0), next_D, prev_D;
+
+	if (timestamps.size() <= static_cast<uint64_t>(N))
+	{
+		return 1000;
+	}
+
+	for (int64_t i = 1; i <= N; i++)
+	{
+		ST = std::max(-FTL, std::min(static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i - 1]), 6 * T));
+
+		L += ST * i;
+
+		if (i > N - 3)
+		{
+			sum_3_ST += ST;
+		}
+	}
+
+	next_D = (cumulative_difficulties[N] - cumulative_difficulties[0]) * T * (N + 1) * 99 / (100 * 2 * L);
+	prev_D = cumulative_difficulties[N] - cumulative_difficulties[N - 1];
+
+	if (sum_3_ST < (8 * T) / 10)
+	{
+		next_D = (prev_D * 110) / 100;
+	}
+
+	return static_cast<Difficulty>(next_D);
+}
+
 bool Currency::check_proof_of_work_v1(const Hash &long_block_hash,
     const BlockTemplate &block,
     Difficulty current_difficulty) const {
@@ -536,6 +593,7 @@ bool Currency::check_proof_of_work(const Hash &long_block_hash,
 		return check_proof_of_work_v1(long_block_hash, block, current_difficulty);
 	case 2:
 	case 3:
+	case 4:
 		return check_proof_of_work_v2(long_block_hash, block, current_difficulty);
 	}
 	//  logger(ERROR, BrightRed) << "Unknown block major version: " <<
@@ -610,10 +668,36 @@ Hash bytecoin::get_block_long_hash(const BlockTemplate &bh, crypto::CryptoNightC
 		auto raw_hashing_block = get_block_hashing_binary_array(bh);
 		return crypto_ctx.cn_slow_hash(raw_hashing_block.data(), raw_hashing_block.size());
 	}
-	if (bh.major_version >= 2) {
+	if (bh.major_version >= 2 && bh.major_version < 4) {
 		auto serializer               = make_parent_block_serializer(bh, true, true);
 		BinaryArray raw_hashing_block = seria::to_binary(serializer);
 		return crypto_ctx.cn_slow_hash(raw_hashing_block.data(), raw_hashing_block.size());
 	}
+	if (bh.major_version >= 4) {
+		auto serializer = make_parent_block_serializer(bh, true, true);
+		BinaryArray raw_hashing_block = seria::to_binary(serializer);
+		return crypto_ctx.cn_lite_slow_hash_v1(raw_hashing_block.data(), raw_hashing_block.size());
+	}
+
 	throw std::runtime_error("Unknown block major version.");
+}
+
+Height Currency::get_timestamp_check_window(Height height) const
+{
+	return height >= hardfork_v2_height ? timestamp_check_window_v2 : timestamp_check_window;
+}
+
+Timestamp Currency::get_block_future_time_limit(Height height) const
+{
+	return height >= hardfork_v2_height ? block_future_time_limit_v2 : block_future_time_limit;
+}
+
+Height bytecoin::Currency::get_difficulty_blocks_count(Height height) const
+{
+	if (height <= hardfork_v2_height)
+	{
+		return difficulty_blocks_count();
+	}
+
+	return difficulty_blocks_count_v2;
 }

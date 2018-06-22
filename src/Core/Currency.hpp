@@ -49,6 +49,7 @@ public:
 	Height difficulty_lag;
 	size_t difficulty_cut;
 	Height difficulty_blocks_count() const { return difficulty_window + difficulty_lag; }
+	Height get_difficulty_blocks_count(Height height) const;
 
 	uint64_t max_block_size_initial;
 	uint64_t max_block_size_growth_speed_numerator;
@@ -59,9 +60,19 @@ public:
 
 	Height upgrade_height_v2;
 	Height upgrade_height_v3;
+	Height upgrade_height_v4;
 	uint8_t get_block_major_version_for_height(Height) const;
 
 	uint8_t current_transaction_version;
+
+	Height hardfork_v1_height;
+	Height hardfork_v2_height;
+	Height hardfork_v3_height;
+
+	Height timestamp_check_window_v2;
+    Timestamp block_future_time_limit_v2;
+	Height difficulty_window_v2;
+	Height difficulty_blocks_count_v2;
 
 	size_t checkpoint_count() const;
 	bool is_in_checkpoint_zone(Height index) const;
@@ -89,6 +100,10 @@ public:
 
 	Difficulty next_difficulty(Height block_index,
 	    std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
+	
+	Difficulty next_difficulty_v1(Height block_index, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
+	
+	Difficulty next_difficulty_v2(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
 
 	bool check_proof_of_work_v1(
 	    const Hash &long_block_hash, const BlockTemplate &block, Difficulty current_difficulty) const;
@@ -106,6 +121,8 @@ public:
 		return block_time + locked_tx_allowed_delta_seconds >= unlock_time;
 	}
 	static bool is_dust(Amount am);
+	Height get_timestamp_check_window(Height height) const;
+	Timestamp get_block_future_time_limit(Height height) const;
 	static uint64_t get_penalized_amount(uint64_t amount, size_t median_size, size_t current_block_size);
 	static std::string get_account_address_as_str(uint64_t prefix, const AccountPublicAddress &adr);
 	static bool parse_account_address_string(uint64_t *prefix, AccountPublicAddress *adr, const std::string &str);

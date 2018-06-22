@@ -13,6 +13,16 @@
 namespace bytecoin {
 namespace parameters {
 
+const uint32_t HARDFORK_V1_HEIGHT = 106195;
+const uint32_t HARDFORK_V2_HEIGHT = 162000;
+const uint32_t HARDFORK_V3_HEIGHT = 4294967294;
+
+const uint32_t DIFFICULTY_TARGET = 120;  // seconds
+const uint32_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V2 = DIFFICULTY_TARGET * 3;
+const uint32_t BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V2 = 11;
+const uint64_t DIFFICULTY_WINDOW_V2 = 60;
+const uint64_t DIFFICULTY_BLOCKS_COUNT_V2 = DIFFICULTY_WINDOW_V2 + 1;
+
 const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER             = 500000000;
 const uint32_t CRYPTONOTE_MAX_BLOCK_BLOB_SIZE          = 500000000;
 const uint32_t CRYPTONOTE_MAX_TX_SIZE                  = 1000000000;
@@ -38,7 +48,6 @@ const size_t CRYPTONOTE_DISPLAY_DECIMAL_POINT       = 10;
 const uint64_t MINIMUM_FEE                          = 1000000;  // pow(10, 6)
 const uint64_t DEFAULT_DUST_THRESHOLD               = 1000000;  // pow(10, 6)
 
-const uint32_t DIFFICULTY_TARGET = 120;  // seconds
 constexpr uint32_t EXPECTED_NUMBER_OF_BLOCKS_PER_DAY(uint32_t difficulty_target) {
 	return 24 * 60 * 60 / difficulty_target;
 }
@@ -73,6 +82,7 @@ const uint32_t CRYPTONOTE_MEMPOOL_TX_LIVETIME = 60 * 60 * 24;  // seconds, one d
 
 const uint32_t UPGRADE_HEIGHT_V2 = 1;
 const uint32_t UPGRADE_HEIGHT_V3 = 2;
+const uint32_t UPGRADE_HEIGHT_V4 = HARDFORK_V2_HEIGHT;
 
 const char CRYPTONOTE_BLOCKS_FILENAME[]       = "blocks.bin";
 const char CRYPTONOTE_BLOCKINDEXES_FILENAME[] = "blockindexes.bin";
@@ -134,5 +144,7 @@ constexpr const CheckpointData CHECKPOINTS[] = {
 	{ 130000, "80add5a415bf8c325497923e039db00de2a086a9dda95e142b03f267e7b7d0c0" },
 	{ 140000, "efab6c622247beaa832a9f14c0a4844055c442baa089c5586ff34cd23db69107" },
 	{ 150000, "9e1582b1d8b2539947299655f1b12d9a65d379d1f5cae650e8049ff083c0b39a" },
+	{ 160000, "a1d285e1faffe828bc2a16ed94e9da284a9ee1960748fe88dc7261871ec14a1c" },
+	{ 162000, "645a8e5bf0f8a10ee5f950f7abf7113b1f7b0e5cc50261234fd5d79acf3b1164" },
 };
 }  // CryptoNote
