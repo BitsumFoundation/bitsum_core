@@ -26,7 +26,7 @@ void ser_members(AccountPublicAddress &v, ISeria &s) {
 	seria_kv("view", v.view_public_key, s);
 }
 void ser_members(bytecoin::SendProof &v, ISeria &s) {
-	const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 6;  // TODO - hard to get reference to our currency here
+	const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 154;  // TODO - hard to get reference to our currency here
 	std::string addr;
 	if (!s.is_input())
 		addr = Currency::get_account_address_as_str(CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX, v.address);
