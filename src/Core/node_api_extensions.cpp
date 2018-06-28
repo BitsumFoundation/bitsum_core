@@ -225,7 +225,7 @@ bool Node::on_get_mempool_json(http::Client *, http::RequestData &&, json_rpc::R
 
 	response.transactions.reserve(v.size());
 
-	for each (auto item in v)
+	for (const auto item : v)
 	{
 		api::extensions::TransactionPreview tp = api::extensions::TransactionPreview();
 		tp.hash = get_transaction_hash(item.second.tx);
