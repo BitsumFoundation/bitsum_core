@@ -14,6 +14,7 @@
 #include "seria/KVBinaryInputStream.hpp"
 #include "seria/KVBinaryOutputStream.hpp"
 #include "version.hpp"
+#include "node_api_extensions.hpp"
 
 using namespace bytecoin;
 
@@ -372,17 +373,15 @@ void Node::advance_long_poll() {
 }
 
 static const std::string beautiful_index_start =
-    R"(<html><body><table valign="middle"><tr><td width="30px">
-<svg xmlns="http://www.w3.org/2000/svg" width="30px" viewBox="0 0 215.99 215.99">
-<circle fill="#f04086" cx="107.99" cy="107.99" r="107.99"></circle>
-<path fill="#fff" d="M158.2 113.09q-6.37-7.05-18.36-8.75v-.17c7-1.13 12.5-4 16.24-8.59a25.09 25.09 0 0 0 5.82-16.23c0-9.86-3.18-16.56-9.75-21.83s-16.44-7-29.81-7h-50.5v47h-29v18H122c6.23 0 10.91.44 14 2.93s4.67 5.71 4.67 10.47-1.56 8.82-4.67 11.37-7.79 4.23-14 4.23H94.84v-14h-23v32H124c13.26 0 23.4-3.46 30.43-8.84s10.33-13.33 10.33-23.08a25.72 25.72 0 0 0-6.56-17.51zm-39.1-15.62H94.84v-29h24.26c12.47 0 18.7 4.87 18.7 14.5s-6.23 14.5-18.7 14.5z"></path>
-</svg></td><td>bytecoind &bull; version
+    R"(<html><body><table valign="middle"><tr>
+	<td>Bitsum Node &bull; version
 )";
 static const std::string beautiful_index_finish = " </td></tr></table></body></html>";
 static const std::string robots_txt             = "User-agent: *\r\nDisallow: /";
 
 bool Node::on_api_http_request(http::Client *who, http::RequestData &&request, http::ResponseData &response) {
 	response.r.add_headers_nocache();
+	response.r.headers.push_back({ "Access-Control-Allow-Origin", "*" });
 	if (request.r.uri == "/" || request.r.uri == "/index.html") {
 		response.r.headers.push_back({"Content-Type", "text/html; charset=UTF-8"});
 		response.r.status = 200;
@@ -471,7 +470,12 @@ const std::unordered_map<std::string, Node::JSONRPCHandlerFunction> Node::m_json
     {api::bytecoind::CheckSendProof::method(), json_rpc::make_member_method(&Node::handle_check_send_proof3)},
     {api::bytecoind::SyncBlocks::method(), json_rpc::make_member_method(&Node::on_wallet_sync3)},
     {api::bytecoind::GetRawTransaction::method(), json_rpc::make_member_method(&Node::on_get_raw_transaction3)},
-    {api::bytecoind::SyncMemPool::method(), json_rpc::make_member_method(&Node::on_sync_mempool3)}};
+    {api::bytecoind::SyncMemPool::method(), json_rpc::make_member_method(&Node::on_sync_mempool3)},
+	{ api::extensions::GetBlocks::method(), json_rpc::make_member_method(&Node::on_get_blocks_json) },
+	{ api::extensions::GetBlock::method(), json_rpc::make_member_method(&Node::on_get_block_json) },
+	{ api::extensions::GetTransaction::method(), json_rpc::make_member_method(&Node::on_get_transaction_json) },
+	{ api::extensions::GetMempool::method(), json_rpc::make_member_method(&Node::on_get_mempool_json) },
+};
 
 bool Node::on_get_random_outputs3(http::Client *, http::RequestData &&, json_rpc::Request &&,
     api::bytecoind::GetRandomOutputs::Request &&request, api::bytecoind::GetRandomOutputs::Response &response) {

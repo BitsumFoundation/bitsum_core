@@ -16,6 +16,7 @@
 #include "p2p/P2PClientBasic.hpp"
 #include "platform/PreventSleep.hpp"
 #include "rpc_api.hpp"
+#include "node_api_extensions.hpp"
 
 namespace bytecoin {
 
@@ -73,6 +74,16 @@ public:
 	bool on_get_block_header_by_height(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	    api::bytecoind::GetBlockHeaderByHeightLegacy::Request &&,
 	    api::bytecoind::GetBlockHeaderByHeightLegacy::Response &);
+
+	// Node API Extensions
+	bool on_get_blocks_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
+		api::extensions::GetBlocks::Request &&, api::extensions::GetBlocks::Response &);
+	bool on_get_block_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
+		api::extensions::GetBlock::Request &&, api::extensions::GetBlock::Response &);
+	bool on_get_transaction_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
+		api::extensions::GetTransaction::Request &&, api::extensions::GetTransaction::Response &);
+	bool on_get_mempool_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
+		api::extensions::GetMempool::Request &&, api::extensions::GetMempool::Response &);
 
 	bool process_json_rpc_request(http::Client *, http::RequestData &&, http::ResponseData &);
 
