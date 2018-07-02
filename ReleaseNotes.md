@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v1.18.7.3
+- Fix mempool issue on Windows
+- Added API for block explorer
+- Fix payment proof generation.
+
 ### v1.18.6.22
 - Change POW algo (CryptoNight Lite, Variation 1)
 - Change Difficulty algo (LWMA-2)

@@ -684,6 +684,7 @@ AddTransactionResult BlockChainState::add_transaction(const Hash &tid, const Tra
 		if (input.type() == typeid(KeyInput)) {
 			const KeyInput &in = boost::get<KeyInput>(input);
 			if (read_keyimage(in.key_image)) {
+				m_log(logging::INFO) << "TX! hash=" << common::pod_to_hex(tid) << " count=" << m_memory_state_tx.size() << std::endl;
 				//				std::cout << common::pod_to_hex(tid) << " " << common::pod_to_hex(in.key_image) <<
 				//std::endl;
 				return AddTransactionResult::OUTPUT_ALREADY_SPENT;  // Already spent in main chain
@@ -756,7 +757,7 @@ AddTransactionResult BlockChainState::add_transaction(const Hash &tid, const Tra
 	                            //: m_memory_state_fee_tx.begin()->first;
 	//	if( m_memory_state_total_size-min_size >= MAX_POOL_SIZE)
 	//		std::cout << "Aha" << std::endl;
-	m_log(logging::INFO) << "TX+ hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size();
+	m_log(logging::INFO) << "TX+ hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size() << std::endl;
 	                     //<< " fee=" << my_fee << " f/b=" << my_fee_per_byte << " current_pool_size=("
 	                     //<< m_memory_state_total_size - min_size << "+" << min_size << ")=" << m_memory_state_total_size
 	                     //<< " count=" << m_memory_state_tx.size() << " min fee/byte=" << min_fee_per_byte << std::endl;
@@ -801,7 +802,7 @@ void BlockChainState::remove_from_pool(Hash tid) {
 	//auto min_fee_per_byte = m_memory_state_fee_tx.empty() || m_memory_state_fee_tx.begin()->second.empty()
 	                            //? 0
 	                            //: m_memory_state_fee_tx.begin()->first;
-	m_log(logging::INFO) << "TX- hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size();
+	m_log(logging::INFO) << "TX- hash=" << common::pod_to_hex(tid) << " size=" << my_size << " count=" << m_memory_state_tx.size() << std::endl;
 	                     //<< " current_pool_size=(" << m_memory_state_total_size - min_size << "+" << min_size << ")="
 	                     //<< m_memory_state_total_size << " count=" << m_memory_state_tx.size()
 	                     //<< " min fee/byte=" << min_fee_per_byte << std::endl;

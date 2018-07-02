@@ -187,6 +187,12 @@ static std::pair<const unsigned char *, size_t> get(const sqlite::Stmt &stmt, co
 	auto da = reinterpret_cast<const unsigned char *>(sqlite3_column_blob(stmt.handle, 0));
 	si      = sqlite3_column_bytes(stmt.handle, 1);
 	da      = reinterpret_cast<const unsigned char *>(sqlite3_column_blob(stmt.handle, 1));
+
+	if (da == nullptr)
+	{
+		da = new unsigned char[0];
+	}
+
 	return std::make_pair(da, si);
 }
 
