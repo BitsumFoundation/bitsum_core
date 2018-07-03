@@ -14,7 +14,6 @@
 #include "seria/KVBinaryInputStream.hpp"
 #include "seria/KVBinaryOutputStream.hpp"
 #include "version.hpp"
-#include "node_api_extensions.hpp"
 
 using namespace bytecoin;
 

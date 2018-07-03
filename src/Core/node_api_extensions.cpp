@@ -54,7 +54,7 @@ namespace extensions
 				continue;
 			}
 
-			uint32_t current_mixin = boost::get<KeyInput>(txin).output_indexes.size();
+			uint32_t current_mixin = (uint32_t)boost::get<KeyInput>(txin).output_indexes.size();
 			if (current_mixin > result)
 			{
 				result = current_mixin;
@@ -63,15 +63,15 @@ namespace extensions
 
 		return result;
 	}
-}
 
-Hash get_payment_id(const BinaryArray &extra) 
-{
-	Hash result;
+	Hash get_payment_id(const BinaryArray &extra)
+	{
+		Hash result;
 
-	get_payment_id_from_tx_extra(extra, result);
+		get_payment_id_from_tx_extra(extra, result);
 
-	return result;
+		return result;
+	}
 }
 
 bool Node::on_get_blocks_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
@@ -149,7 +149,7 @@ bool Node::on_get_block_json(http::Client *, http::RequestData &&, json_rpc::Req
 	tp.hash = get_transaction_hash(block.header.base_transaction);
 	tp.fee = 0;
 	tp.size = seria::to_binary(block.header.base_transaction).size();
-	bh->transactions_cumulative_size += tp.size;
+	bh->transactions_cumulative_size += (uint32_t)tp.size;
 	tp.amount_out = extensions::get_output_amount(block.header.base_transaction);
 	tp.mixin = 0; 
 	response.block.transactions.push_back(tp);
@@ -163,7 +163,7 @@ bool Node::on_get_block_json(http::Client *, http::RequestData &&, json_rpc::Req
 		tp.fee = extensions::get_input_amount(t) - tp.amount_out;
 		tp.size = seria::to_binary(t).size();
 		tp.mixin = extensions::get_mixin(t);
-		tp.payment_id = get_payment_id(t.extra);
+		tp.payment_id = extensions::get_payment_id(t.extra);
 
 		response.block.transactions.push_back(tp);
 	}
@@ -211,7 +211,7 @@ bool Node::on_get_transaction_json(http::Client *, http::RequestData &&, json_rp
 	
 	response.transaction_details.size = seria::to_binary(response.transaction).size();
 	response.transaction_details.mixin = extensions::get_mixin(response.transaction);
-	response.transaction_details.payment_id = get_payment_id(response.transaction.extra);
+	response.transaction_details.payment_id = extensions::get_payment_id(response.transaction.extra);
 	
 	return true;
 }
@@ -234,7 +234,7 @@ bool Node::on_get_mempool_json(http::Client *, http::RequestData &&, json_rpc::R
 		tp.fee = extensions::get_input_amount(item.second.tx) - tp.amount_out;
 		tp.size = seria::to_binary(item.second.tx).size();
 		tp.mixin = extensions::get_mixin(item.second.tx);
-		tp.payment_id = get_payment_id(item.second.tx.extra);
+		tp.payment_id = extensions::get_payment_id(item.second.tx.extra);
 		response.transactions.push_back(tp);
 	}
 	

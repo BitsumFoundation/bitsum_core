@@ -23,7 +23,9 @@ const WalletNode::HandlersMap WalletNode::m_jsonrpc3_handlers = {
     {api::walletd::CreateTransaction::method(), json_rpc::make_member_method(&WalletNode::handle_create_transaction3)},
     {api::walletd::SendTransaction::method(), json_rpc::make_member_method(&WalletNode::handle_send_transaction3)},
     {api::walletd::CreateSendProof::method(), json_rpc::make_member_method(&WalletNode::handle_create_send_proof3)},
-    {api::walletd::GetTransaction::method(), json_rpc::make_member_method(&WalletNode::handle_get_transaction3)}};
+    {api::walletd::GetTransaction::method(), json_rpc::make_member_method(&WalletNode::handle_get_transaction3)},
+	{ api::extensions::GetKeys::method(), json_rpc::make_member_method(&WalletNode::on_get_keys) },
+};
 
 WalletNode::WalletNode(Node *inproc_node, logging::ILogger &log, const Config &config, WalletState &wallet_state)
     : WalletSync(log, config, wallet_state, std::bind(&WalletNode::advance_long_poll, this))

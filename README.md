@@ -36,8 +36,8 @@ To go futher you have to have a number of packages and utilities. You need at le
     ```
     If version is too old, follow instructions on [the official site](https://cmake.org/download/).
 
-* Boost (1.62 or newer):
-    You need boost in `bcndev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
+* Boost (1.65 or newer):
+    You need boost in `bitsum` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
     ```
     $bitsum> wget -c 'https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz'
     $bitsum> tar xf boost_1_65_1.tar.gz

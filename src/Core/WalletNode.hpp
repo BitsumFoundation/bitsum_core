@@ -6,6 +6,7 @@
 #include "Node.hpp"
 #include "WalletSync.hpp"
 #include "http/Server.hpp"
+#include "wallet_api_extensions.hpp"
 
 namespace bytecoin {
 
@@ -41,6 +42,10 @@ public:
 	    api::bytecoind::SendTransaction::Response &);  // We lock spent outputs until next pool sync
 	bool handle_get_transaction3(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	    api::walletd::GetTransaction::Request &&, api::walletd::GetTransaction::Response &);
+
+	// WalletNode API Extensions
+	bool on_get_keys(http::Client *, http::RequestData &&, json_rpc::Request &&,
+		api::extensions::GetKeys::Request &&, api::extensions::GetKeys::Response &);
 
 private:
 	Node *m_inproc_node;
