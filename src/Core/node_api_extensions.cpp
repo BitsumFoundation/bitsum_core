@@ -72,6 +72,13 @@ namespace extensions
 
 		return result;
 	}
+
+	bool check_zeros(const Hash hash)
+	{
+		int n = 32;
+		while (--n>0 && hash.data[n] == hash.data[0]);
+		return n == 0;
+	}
 }
 
 bool Node::on_get_blocks_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
@@ -127,7 +134,21 @@ bool Node::on_get_blocks_json(http::Client *, http::RequestData &&, json_rpc::Re
 bool Node::on_get_block_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	api::extensions::GetBlock::Request &&request, api::extensions::GetBlock::Response &response)
 {
-	m_log(logging::INFO) << "API_EX: get_block_json, hash=" << common::pod_to_hex(request.hash);
+	if (extensions::check_zeros(request.hash) && request.height >= 0)
+	{
+		m_log(logging::INFO) << "API_EX: get_block_json, height=" << request.height;
+
+		if (request.height > m_block_chain.get_tip_height())
+		{
+			throw json_rpc::Error(json_rpc::INVALID_PARAMS, "Internal node error: Can't get block by height (too big)");
+		}
+
+		m_block_chain.read_chain(request.height, &request.hash);
+	}
+	else
+	{
+		m_log(logging::INFO) << "API_EX: get_block_json, hash=" << common::pod_to_hex(request.hash);
+	}
 
 	if (!m_block_chain.read_header(request.hash, &response.block.header))
 	{
@@ -283,6 +304,7 @@ namespace seria
 	void ser_members(api::extensions::GetBlock::Request &v, ISeria &s)
 	{
 		seria_kv("hash", v.hash, s);
+		seria_kv("height", v.height, s);
 	}
 
 	void ser_members(api::extensions::GetBlock::Response &v, ISeria &s)

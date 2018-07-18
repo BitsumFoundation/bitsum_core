@@ -247,6 +247,7 @@ void Node::P2PClientBytecoin::on_msg_notify_new_transactions(NOTIFY_NEW_TRANSACT
 		case AddTransactionResult::INCREASE_FEE:
 		case AddTransactionResult::FAILED_TO_REDO:
 		case AddTransactionResult::OUTPUT_ALREADY_SPENT:
+		case AddTransactionResult::TOO_OLD:
 			break;
 		}
 	}
@@ -666,6 +667,8 @@ bool Node::handle_send_transaction3(http::Client *, http::RequestData &&, json_r
 		throw json_rpc::Error(-102, "Transaction references outputs changed during reorganization or signature wrong");
 	case AddTransactionResult::OUTPUT_ALREADY_SPENT:
 		throw json_rpc::Error(-103, "One of referenced outputs is already spent");
+	case AddTransactionResult::TOO_OLD: 
+		throw json_rpc::Error(-104, "Trying to send too old transaction");
 	}
 	return true;
 }

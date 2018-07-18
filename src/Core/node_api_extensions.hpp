@@ -62,6 +62,7 @@ namespace bytecoin
 				struct Request
 				{
 					crypto::Hash hash;
+					Height height;
 				};
 
 				struct Response

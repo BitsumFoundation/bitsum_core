@@ -20,7 +20,8 @@ enum class AddTransactionResult {
 	ALREADY_IN_POOL,
 	INCREASE_FEE,
 	FAILED_TO_REDO,
-	OUTPUT_ALREADY_SPENT
+	OUTPUT_ALREADY_SPENT,
+	TOO_OLD
 };
 
 struct PreparedBlock {

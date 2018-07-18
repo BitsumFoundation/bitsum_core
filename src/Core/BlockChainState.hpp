@@ -149,7 +149,7 @@ private:
 
 	void undo_transaction(IBlockChainState *delta_state, Height, const Transaction &);
 
-	//	const Config &m_config;
+	const Config &m_config;
 	const Currency &m_currency;
 	logging::LoggerRef m_log;
 	mutable crypto::CryptoNightContext m_hash_crypto_context;

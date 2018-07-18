@@ -171,7 +171,7 @@ static std::string validate_semantic(bool generating, const Transaction &tx, uin
 
 BlockChainState::BlockChainState(logging::ILogger &log, const Config &config, const Currency &currency, bool read_only)
     : BlockChain(currency.genesis_block_hash, config.get_data_folder(), read_only)
-    //    , m_config(config)
+    , m_config(config)
     , m_currency(currency)
     , m_log(log, "BlockChainState")
     , log_redo_block_timestamp(std::chrono::steady_clock::now()) {
@@ -643,9 +643,13 @@ void BlockChainState::on_reorganization(
 
 AddTransactionResult BlockChainState::add_transaction(
     const Hash &tid, const Transaction &tx, const BinaryArray &binary_tx, Timestamp now) {
-	//	Timestamp g_timestamp = read_first_seen_timestamp(tid);
-	//	if (g_timestamp != 0 && now > g_timestamp + m_config.mempool_tx_live_time)
-	//		return AddTransactionResult::TOO_OLD;
+		Timestamp g_timestamp = read_first_seen_timestamp(tid);
+		if (g_timestamp != 0 && now > m_config.mempool_tx_live_time)
+		{
+			m_log(logging::INFO) << "TX! (OLD) hash=" << common::pod_to_hex(tid) << " count=" << m_memory_state_tx.size() << std::endl;
+			return AddTransactionResult::TOO_OLD;
+		}
+			
 	return add_transaction(tid, tx, binary_tx, get_tip_height() + 1, get_tip().timestamp, true);
 }
 
