@@ -134,7 +134,7 @@ bool Node::on_get_blocks_json(http::Client *, http::RequestData &&, json_rpc::Re
 bool Node::on_get_block_json(http::Client *, http::RequestData &&, json_rpc::Request &&,
 	api::extensions::GetBlock::Request &&request, api::extensions::GetBlock::Response &response)
 {
-	if (extensions::check_zeros(request.hash) && request.height >= 0)
+	if (extensions::check_zeros(request.hash))
 	{
 		m_log(logging::INFO) << "API_EX: get_block_json, height=" << request.height;
 
