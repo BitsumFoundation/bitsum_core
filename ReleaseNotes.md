@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v1.18.7.20
+- Fixed lifetime for transactions
+- Added API for getting block by height
+- Added checkpoints
+
 ### v1.18.7.3
 - Fix mempool issue on Windows
 - Added API for block explorer
