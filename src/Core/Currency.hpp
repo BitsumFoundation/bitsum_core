@@ -13,6 +13,7 @@ namespace bytecoin {
 
 class Currency {  // Consensus calcs depend on those parameters
 public:
+	//static uint64_t CD2, CD3;
 	static const std::vector<Amount> PRETTY_AMOUNTS;
 	static const std::vector<Amount> DECIMAL_PLACES;
 
@@ -68,6 +69,7 @@ public:
 	Height hardfork_v1_height;
 	Height hardfork_v2_height;
 	Height hardfork_v3_height;
+	Height hardfork_v4_height;
 
 	Height timestamp_check_window_v2;
     Timestamp block_future_time_limit_v2;
@@ -102,8 +104,8 @@ public:
 	    std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
 	
 	Difficulty next_difficulty_v1(Height block_index, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
-	
 	Difficulty next_difficulty_v2(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
+	Difficulty next_difficulty_v3(Height height, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
 
 	bool check_proof_of_work_v1(
 	    const Hash &long_block_hash, const BlockTemplate &block, Difficulty current_difficulty) const;
