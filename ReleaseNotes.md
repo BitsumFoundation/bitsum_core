@@ -1,5 +1,10 @@
 ## Release Notes
 
+### v1.18.10.29
+- LWMA-3 Difficulty algo
+- LMDB for Windows x64
+- Added checkpoints
+
 ### v1.18.7.20
 - Fixed lifetime for transactions
 - Added API for getting block by height
