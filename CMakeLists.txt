@@ -12,7 +12,7 @@ option(WITH_THREAD_SANITIZER "For testing - builds with thread sanitizer instrum
 option(USE_SSL "Builds with support of https between wallet-rpc and bitsumd" OFF)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     if(WIN32)
-	    option(USE_SQLITE "Builds with SQLite instead of LMDB. 4x slower, but works on 32-bit and mobile platforms" ON)
+	    option(USE_SQLITE "Builds with SQLite instead of LMDB. 4x slower, but works on 32-bit and mobile platforms" OFF)
 	else()
 		option(USE_SQLITE "Builds with SQLite instead of LMDB. 4x slower, but works on 32-bit and mobile platforms" OFF)
     endif()

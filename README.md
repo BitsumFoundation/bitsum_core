@@ -55,7 +55,7 @@ $bitsum> git clone https://github.com/BitsumFoundation/bitsum_core.git
 
 Put LMDB source code in `bitsum` folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
-$bitsum> git clone https://github.com/LMDB/lmdb.git
+$bitsum> git clone https://github.com/BitsumFoundation/lmdb.git
 ```
 
 Create build directory inside bytecoin, go there and run CMake and Make:
@@ -114,7 +114,7 @@ $bitsum> git clone https://github.com/BitsumFoundation/bitsum_core.git
 
 Put LMDB source code in `bitsum` folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
-$bitsum> git clone https://github.com/LMDB/lmdb.git
+$bitsum> git clone https://github.com/BitsumFoundation/lmdb.git
 ```
 
 Create build directory inside bitsum_core, go there and run CMake and Make:
@@ -202,7 +202,7 @@ $C:\bitsum> git clone https://github.com/BitsumFoundation/bitsum_core.git
 
 Put LMDB in the same folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
-$C:\bitsum> git clone https://github.com/LMDB/lmdb.git
+$C:\bitsum> git clone https://github.com/BitsumFoundation/lmdb.git
 ```
 
 You need to build openssl, first install ActivePerl (select "add to PATH" option, then restart console):
