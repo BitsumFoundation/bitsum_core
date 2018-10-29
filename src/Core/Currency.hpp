@@ -105,7 +105,7 @@ public:
 	
 	Difficulty next_difficulty_v1(Height block_index, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
 	Difficulty next_difficulty_v2(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
-	Difficulty next_difficulty_v3(Height height, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
+	Difficulty next_difficulty_v3(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const;
 
 	bool check_proof_of_work_v1(
 	    const Hash &long_block_hash, const BlockTemplate &block, Difficulty current_difficulty) const;

@@ -18,7 +18,6 @@
 #include "platform/PathTools.hpp"
 #include "seria/BinaryInputStream.hpp"
 #include "seria/BinaryOutputStream.hpp"
-#include <iostream>
 
 using namespace common;
 using namespace bytecoin;
@@ -395,9 +394,6 @@ bool Currency::parse_amount(size_t number_of_decimal_places, const std::string &
 	return !stream.fail();
 }
 
-//uint64_t Currency::CD2 = 0;
-//uint64_t Currency::CD3 = 0;
-
 Difficulty Currency::next_difficulty(Height block_index,
 	std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const {
 	if (block_index <= hardfork_v2_height)
@@ -410,34 +406,7 @@ Difficulty Currency::next_difficulty(Height block_index,
 		return next_difficulty_v2(timestamps, cumulative_difficulties);
 	}
 	
-	return next_difficulty_v3(block_index, timestamps, cumulative_difficulties);
-
-	//Difficulty d2 = next_difficulty_v2(timestamps, cumulative_difficulties);
-	//Difficulty d3 = next_difficulty_v3(block_index, timestamps, cumulative_difficulties);
-
-	//if (block_index < 250000)
-	//{
-	//	return d2;
-	//}
-
-	//Currency::CD2 += d2;
-	//Currency::CD3 += d3;
-	//double p, dp;
-	//if (d3 >= d2)
-	//{
-	//	p = (d3 - d2) / static_cast<double>(d2) * 100;	
-	//	std::cout << "D2=" << d2 << "|D3=" << d3 << "|%[+]=" << p << "|DP=";
-	//}
-	//else
-	//{
-	//	p = (d2 - d3) / static_cast<float>(d3) * 100;
-	//	std::cout << "D2=" << d2 << "|D3=" << d3 << "|%[-]=" << p << "|DP=";
-	//}
-
-	//dp = (Currency::CD3 - Currency::CD2) / static_cast<double>(Currency::CD2) * 100;
-	//std::cout << dp << std::endl;
-
-	//return d2;
+	return next_difficulty_v3(timestamps, cumulative_difficulties);
 }
 
 Difficulty Currency::next_difficulty_v1(Height block_index, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const
@@ -586,10 +555,10 @@ Difficulty Currency::next_difficulty_v2(std::vector<Timestamp> timestamps, std::
 // LWMA-3 difficulty algorithm 
 // Copyright (c) 2017-2018 Zawy, MIT License
 // https://github.com/zawy12/difficulty-algorithms/issues/3
-Difficulty Currency::next_difficulty_v3(Height height, std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const
+Difficulty Currency::next_difficulty_v3(std::vector<Timestamp> timestamps, std::vector<Difficulty> cumulative_difficulties) const
 {
-	int64_t T = difficulty_target;
-	int64_t N = difficulty_window_v2;
+	uint32_t T = difficulty_target;
+	uint32_t N = difficulty_window_v2;
 	int64_t FTL = block_future_time_limit_v2;
 	int64_t L(0), ST, sum_3_ST(0), next_D, prev_D, this_timestamp, previous_timestamp;
 
@@ -631,11 +600,6 @@ Difficulty Currency::next_difficulty_v3(Height height, std::vector<Timestamp> ti
 	{
 		next_D = std::max(next_D, (prev_D * 108) / 100);
 	}
-
-	//if (height <= hardfork_v3_height + N / 6 + 1) 
-	//{  
-	//	next_D = next_D * 85 / 100; 
-	//}
 
 	if (next_D < 10000000)
 	{
