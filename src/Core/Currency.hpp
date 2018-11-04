@@ -13,7 +13,6 @@ namespace bytecoin {
 
 class Currency {  // Consensus calcs depend on those parameters
 public:
-	//static uint64_t CD2, CD3;
 	static const std::vector<Amount> PRETTY_AMOUNTS;
 	static const std::vector<Amount> DECIMAL_PLACES;
 
