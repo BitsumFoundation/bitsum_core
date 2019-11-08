@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <stdexcept>
 #include "common/BinaryArray.hpp"
 #include "common/Nocopy.hpp"
 
