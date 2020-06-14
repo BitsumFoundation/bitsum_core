@@ -55,10 +55,11 @@ int main(int argc, const char *argv[]) try {
 	common::console::UnicodeConsoleSetup console_setup;
 	auto idea_start = std::chrono::high_resolution_clock::now();
 	common::CommandLine cmd(argc, argv);
-	std::string wallet_file, password, new_password, export_view_only, import_keys_value, backup_wallet;
+	std::string wallet_file, password, rpc_auth, new_password, export_view_only, import_keys_value, backup_wallet;
 //	const bool set_password_and_continue  = cmd.get_bool("--set-password-and-continue"); // Run normally after set password, used by GUI wallet
 	const bool set_password  = cmd.get_bool("--set-password");// || set_password_and_continue;
 	bool ask_password  = true;
+	bool ask_rpc_auth    = true;
 	const bool export_keys   = cmd.get_bool("--export-keys");
 	const bool create_wallet = cmd.get_bool("--create-wallet");
 	const bool import_keys   = cmd.get_bool("--import-keys");
@@ -86,6 +87,10 @@ int main(int argc, const char *argv[]) try {
 	if (const char *pa = cmd.get("--wallet-password")) {
 		password     = pa;
 		ask_password = false;
+	}
+	if (const char *pa = cmd.get("--rpc-authorization")) {
+		rpc_auth     = pa;
+		ask_rpc_auth = false;
 	}
 	if (!ask_password && create_wallet) {
 		std::cout << "When generating wallet, you cannot use --wallet-password. Wallet password will be read from stdin"
@@ -232,20 +237,33 @@ int main(int argc, const char *argv[]) try {
 		std::cout << "Password on command line is a security risk. Use echo <pwd> | ./wallet-rpc" << std::endl;
 		common::console::set_text_color(common::console::Default);
 	}
-	std::cout << "Enter HTTP authorization <user>:<password> for walletd RPC: " << std::flush;
-	std::string auth;
-	if (!std::getline(std::cin, auth)) {
-		std::cout << "Unexpected end of stdin" << std::endl;
-		return api::WALLETD_WRONG_ARGS;
+
+	if (ask_rpc_auth) {
+		std::cout << "Enter HTTP authorization <user>:<password> for walletd RPC: " << std::flush;
+		if (!std::getline(std::cin, rpc_auth)) {
+			std::cout << "Unexpected end of stdin" << std::endl;
+			return api::WALLETD_WRONG_ARGS;
+		}
+		boost::algorithm::trim(rpc_auth);
+	} else {
+	
 	}
-	boost::algorithm::trim(auth);
-	config.walletd_authorization = common::base64::encode(BinaryArray(auth.data(), auth.data() + auth.size()));
+
+	if (rpc_auth != ":") {
+		config.walletd_authorization = common::base64::encode(BinaryArray(rpc_auth.data(), rpc_auth.data() + rpc_auth.size()));
+		config.bytecoind_authorization =
+		    common::base64::encode(BinaryArray(rpc_auth.data(), rpc_auth.data() + rpc_auth.size()));
+	} else {
+		config.walletd_authorization.clear();
+		config.bytecoind_authorization.clear();
+	}
+		
 	if (config.walletd_authorization.empty()) {
 		common::console::set_text_color(common::console::BrightRed);
 		std::cout << "No authorization for RPC is a security risk. Use username with a strong password" << std::endl;
 		common::console::set_text_color(common::console::Default);
 	} else {
-		if (auth.find(":") == std::string::npos) {
+		if (rpc_auth.find(":") == std::string::npos) {
 			std::cout << "HTTP authorization must be in the format <user>:<password>" << std::endl;
 			return api::WALLETD_WRONG_ARGS;
 		}
